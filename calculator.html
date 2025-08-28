@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* ========== base & theme ========== */
+:root{
+  --bg: #0f1115;
+  --panel: #171a21;
+  --accent: #4f8cff;
+  --accent-2: #00d3a7;
+  --text: #e9edf1;
+  --muted: #97a3b6;
+  --btn: #232834;
+  --btn-hover: #2b3140;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+*{ box-sizing: border-box; }
+
+html,body{
+  height:100%;
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 800px at 20% -10%, #1a2030 0%, var(--bg) 60%);
+  color: var(--text);
+}
+
+body{
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+
+/* handle both .contianer (your markup) and .container */
+.contianer, .container{
+  width:min(92vw, 380px);
+  background: var(--panel);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display:grid;
+  grid-template-rows: auto auto auto auto;
+  gap: 12px;
+}
+
+/* displays (typo-safe) */
+#dispaly, #display, #answer{
+  background: linear-gradient(180deg, #1f2431 0%, #1a1f2b 100%);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-height: 48px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  font-variant-numeric: tabular-nums;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+/* primary display vs small history line */
+#dispaly, #display{
+  font-size: 14px;
+  color: var(--muted);
+}
+#answer{
+  font-size: clamp(22px, 4.5vw, 34px);
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* button areas */
+#number, #action{
+  display:grid;
+  gap:10px;
+}
+
+/* numbers: 5 buttons in a row as in your HTML */
+#number{
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* actions: 5 operators */
+#action{
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* buttons */
+#number button,
+#action button{
+  appearance:none;
+  border:none;
+  background: var(--btn);
+  color: var(--text);
+  padding: 14px 0;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+  box-shadow: 0 2px 0 rgba(255,255,255,.04) inset, 0 1px 0 rgba(0,0,0,.35);
+}
+#number button:hover,
+#action button:hover{
+  background: var(--btn-hover);
+}
+#number button:active,
+#action button:active{
+  transform: translateY(1px) scale(.99);
+}
+
+/* accent styles for operators and equals */
+#action button:nth-child(1),
+#action button:nth-child(2),
+#action button:nth-child(3),
+#action button:nth-child(4){
+  background: linear-gradient(180deg, #263249 0%, #222b3e 100%);
+  border: 1px solid rgba(79,140,255,.25);
+}
+#action button:nth-child(1):hover,
+#action button:nth-child(2):hover,
+#action button:nth-child(3):hover,
+#action button:nth-child(4):hover{
+  background: linear-gradient(180deg, #2b3852 0%, #263249 100%);
+}
+
+/* equals button pop */
+#action button:nth-child(5){
+  background: linear-gradient(180deg, #19c7a5 0%, #10b48f 100%);
+  color:#0b1a16;
+  border: 1px solid rgba(0,211,167,.35);
+  box-shadow: 0 6px 18px rgba(0,211,167,.25);
+}
+#action button:nth-child(5):hover{
+  filter: brightness(1.06);
+}
+
+/* focus-visible for keyboard users */
+#number button:focus-visible,
+#action button:focus-visible{
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* small screens */
+@media (max-width: 360px){
+  #number button, #action button{ font-size: 15px; padding: 12px 0; }
+  #answer{ font-size: 24px; }
+}
+
+/* optional: nice press effect for all buttons */
+#number button:active, #action button:active{
+  box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 0 0 rgba(0,0,0,.35);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div id="display"></div>
+    <div id="answer">0</div>
+
+    <div id="number">
+      <button class="num">1</button>
+      <button class="num">2</button>
+      <button class="num">3</button>
+      <button class="num">4</button>
+      <button class="num">5</button>
+      <button class="clear">C</button>
+    </div>
+
+    <div id="action">
+      <button class="op">+</button>
+      <button class="op">-</button>
+      <button class="op">/</button>
+      <button class="op">*</button>
+      <button id="equal">=</button>
+    </div>
+  </div>
+</body>
+<script>
+
+    let display = document.querySelector('#display');
+let answer = document.querySelector('#answer');
+let numbers = document.querySelectorAll('.num');
+let operators = document.querySelectorAll('.op');
+let equal = document.querySelector('#equal');
+let clear = document.querySelector('.clear')
+// store current expression
+let expression = "";
+
+// handle number clicks
+numbers.forEach(num => {
+  num.addEventListener('click', () => {
+    expression += num.innerText;
+    display.innerText = expression;
+  });
+});
+
+// handle operator clicks
+operators.forEach(op => {
+  op.addEventListener('click', () => {
+    expression += ` ${op.innerText} `;
+    display.innerText = expression;
+  });
+});
+
+// handle equal click
+equal.addEventListener('click', () => {
+  try {
+    let result = eval(expression); // ⚠️ only for learning — eval is unsafe in real apps
+    answer.innerText = result;
+  } catch (e) {
+    answer.innerText = "Error";
+  }
+});
+
+clear.addEventListener('click',()=>{
+     expression = "";              // reset stored expression
+  display.innerText = "";       // clear display
+  answer.innerText = "0"; 
+})
+   
+</script>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Lexical</h1>
+    <p>This is a simple HTML document to demonstrate the lexical structure.</p>
+    <button id="red">Red</button>
+    <button id="green">Green</button>
+    <button id="blue">Blue</button>
+  </body>
+  <script>
+    document.getElementById("red").onclick = changeColor("red");
+    document.getElementById("blue").onclick = changeColor("blue");
+    document.getElementById("green").onclick = changeColor("green");
+
+    function changeColor(color) {
+      return function () {
+        document.body.style.backgroundColor = color;
+      };
+    }
+
+
+    function outer(){
+       let  count = 0;
+        function inner(){
+            return  count++
+        }
+        return inner;
+    }
+    let counter = outer()
+    console.log(counter());
+    console.log(counter());
+    console.log(counter());
+  </script>
+</html>

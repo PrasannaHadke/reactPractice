@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button>Red</button>
+    <button id="btn1">Green</button>
+</body>
+<script>
+    // document.querySelector('button').onclick = ()=>{
+    //     document.body.style.backgroundColor = 'red'
+    // }
+
+    document.querySelector('button').onclick = changeBg('red')
+    document.querySelector('#btn1').onclick = changeBg('green')
+    function changeBg(color){
+        return function(){
+            document.body.style.backgroundColor = color
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f0f2f5;
+    }
+
+    p {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    ul {
+      margin-top: 20px;
+      padding-left: 0;
+    }
+
+    li {
+      list-style: none;
+      background: #fff;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    li button {
+      background-color: #dc3545;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+
+    li button:hover {
+      background-color: #b52a37;
+    }
+  </style>
+</head>
+<body>
+  <p>Add Todo</p>
+  <input type="text" id="text">
+  <button id="btn">Add Task</button>
+  <ul id="todoList"></ul>
+
+  <script>
+    let input = document.getElementById('text')
+    let btn = document.getElementById('btn')
+    let todoList = document.getElementById('todoList')
+
+    btn.addEventListener('click', () => {
+      let inputValue = input.value.trim()
+      if (inputValue === '') return
+
+      let todoItem = document.createElement('li')
+      let deletebtn = document.createElement('button')
+
+      todoItem.innerText = inputValue
+      deletebtn.innerText = 'Delete'
+
+      todoItem.appendChild(deletebtn)
+      todoList.appendChild(todoItem)
+
+      input.value = ''
+
+      deletebtn.addEventListener('click', () => {
+        todoList.removeChild(todoItem)
+      })
+    })
+  </script>
+</body>
+</html>
