@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ApiContext from './ApiContext'
 function ApiProvider({children}) {
     const [data, setData] = useState([])
+    const [loading, setLoading] = useState(true)
 
-    useState(() => {
+    useEffect(() => {
         const getData = async () => {
             try {
                 const res = await fetch('https://dummyjson.com/products')
@@ -11,12 +12,14 @@ function ApiProvider({children}) {
                 setData(result)
             } catch (error) {
                 console.log(error.message);
+            }finally{
+                setLoading(false)
             }
         }
         getData()
-    }, [setData])
+    }, [])
     return (
-        <ApiContext.Provider value={{data, setData}}>
+        <ApiContext.Provider value={{data, setData,loading}}>
             {children}
         </ApiContext.Provider>
     )
